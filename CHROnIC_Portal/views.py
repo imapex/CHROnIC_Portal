@@ -8,8 +8,10 @@ import json
 import requests
 import os
 import pprint
+import base64
 busbaseurl = os.environ['CHRONICBUS']
-
+ucsbaseurl = os.environ['CHRONICUCS']
+mybaseurl = os.environ['CHRONICPORTAL']
 
 @app.route("/")
 def index():
@@ -42,10 +44,10 @@ def hcStatus():
     ucs = ucs.replace('%un%', ucs_username)
     ucs = ucs.replace('%pw%', ucs_password)
 
-    ucs = ucs.replace('\\\"', '\"')
-    ucs = ucs.replace('\"', '\\\"')
+    #ucs = ucs.replace('\\\"', '\"')
+    #ucs = ucs.replace('\"', '\\\"')
 
-    content = '{"msgdata":"' + ucs + '", "status": "0", "desc":"' + "ucs"+ '"}'
+    content = '{"msgdata":"' + base64.b64encode(bytes(ucs, "utf-8")).decode("ascii") + '", "status": "0", "desc":"ucs"}'
     r = requests.post(url, data=content, headers=headers)
     print(url)
     print(r)
@@ -58,19 +60,19 @@ def hcStatus():
     vcenter = vcenter.replace('%un%', vc_username)
     vcenter = vcenter.replace('%pw%', vc_password)
 
-    vcenter = vcenter.replace('\\\"', '\"')
-    vcenter = vcenter.replace('\"', '\\\"')
+    #vcenter = vcenter.replace('\\\"', '\"')
+    #vcenter = vcenter.replace('\"', '\\\"')
 
-    webhookurl = "http://imapex-chronic-ucs-esx-analyzer.green.browndogtech.com/api/{}".format(channelid)
+    webhookurl = ucsbaseurl + "/api/{}".format(channelid)
 
-    content = '{"msgdata":"' + vcenter + '", "status": "0", "desc":"' + "vcenter" + '", "webhook":"'+ webhookurl +'"}'
+    content = '{"msgdata":"' + base64.b64encode(bytes(vcenter, "utf-8")).decode("ascii") + '", "status": "0", "desc":"vcenter", "webhook":"' + webhookurl + '"}'
     r = requests.post(url, data=content, headers=headers)
     print(url)
     print(r)
     print(content)
 
 
-    return redirect("/jobs", code=302)
+    return redirect(mybaseurl + "/jobs", code=302)
 
 
 @app.route("/jobs")
