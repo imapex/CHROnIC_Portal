@@ -16,7 +16,6 @@ mybaseurl = os.environ['CHRONICPORTAL']
 @app.route("/")
 def index():
     return render_template("index.html")
-    #return redirect("/hc_auth", code=302)
 
 @app.route("/hc_auth")
 def hcAuth():
