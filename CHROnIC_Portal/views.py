@@ -43,8 +43,7 @@ def hcStatus():
     ucs = ucs.replace('%un%', ucs_username)
     ucs = ucs.replace('%pw%', ucs_password)
 
-    #ucs = ucs.replace('\\\"', '\"')
-    #ucs = ucs.replace('\"', '\\\"')
+
 
     content = '{"msgdata":"' + base64.b64encode(bytes(ucs, "utf-8")).decode("ascii") + '", "status": "0", "desc":"ucs"}'
     r = requests.post(url, data=content, headers=headers)
