@@ -20,28 +20,21 @@ CHRONICBUS describes the base url of the CHROnIC Bus system used as the centrali
 CHRONICBUS
 ```
 
-## Downloading
-
-```
-git clone http://github.com/chapeter/CHROnIC_Portal
-```
-
-or
-
-```
-docker pull chapeter/chronic-portal
-```
 
 ## Usage
-
+### Python
 ```
+export CHRONICBUS=<url>
+export CHRONICUCS=<url>
 python3 main.py
 ```
 
 or
 
+### Docker
 ```
-docker run -d -e "CHRONICBUS=<url>" chapeter/chronic-portal
+docker build -t chronic-portal
+docker run -d -e "CHRONICBUS=<url>" -e "CHRONICUCS=<url"> chronic-portal
 ```
 
 
