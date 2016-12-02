@@ -1,48 +1,58 @@
+import os
 import requests
 import pprint
 import ast
 
-def getReports():
-    url = "http://imapex-chronic-bus.green.browndogtech.com/api/get"
-    response = requests.request("GET", url)
-    channels = response.json()
+busbaseurl = os.environ['CHRONICBUS']
+ucsbaseurl = os.environ['CHRONICUCS']
 
-    reports = []
-    for channel in channels:
-        if "report" in channel:
-            channels[channel]['status'] = "complete"
-            reports.append({'report': channel, 'link': '/report/{}'.format(channel), 'status': channels[channel]['status']})
+def getReports():
+    url = busbaseurl + "/api/get"
+    response = requests.request("GET", url)
+    if response.status_code == 200:
+        channels = response.json()
+
+        reports = []
+        for channel in channels:
+            if "report" in channel:
+                channels[channel]['status'] = "complete"
+                reports.append({'report': channel, 'link': '/report/{}'.format(channel), 'status': channels[channel]['status']})
+    else:
+        reports = []
 
     return reports
 
 
-
 def getJobs():
-    url = "http://imapex-chronic-bus.green.browndogtech.com/api/get"
+    url = busbaseurl + "/api/get"
     response = requests.request("GET", url)
-    channels = response.json()
-    jobs = []
+    if response.status_code == 200:
+        channels = response.json()
+        jobs = []
 
-    basebuildlink = "http://imapex-chronic-ucs-esx-analyzer.green.browndogtech.com/api/"
+        basebuildlink = ucsbaseurl + "/api/"
 
-    for channel in channels:
-        if "report" not in channel:
-            tracker = 0
-            for task in channels[channel].keys():
-                if channels[channel][task] != "2":
-                    tracker = tracker + 1
-            if tracker == 0:
-                channels[channel]['status'] = "complete"
-            else:
-                channels[channel]['status'] = "in progress"
-            jobs.append({'job':channel, 'link':basebuildlink + channel, 'status':channels[channel]['status']})
+        for channel in channels:
+            if "report" not in channel:
+                tracker = 0
+                for task in channels[channel].keys():
+                    if channels[channel][task] != "2":
+                        tracker = tracker + 1
+                if tracker == 0:
+                    channels[channel]['status'] = "complete"
+                else:
+                    channels[channel]['status'] = "in progress"
+                jobs.append({'job':channel, 'link':basebuildlink + channel, 'status':channels[channel]['status']})
+    else:
+        channels = {}
+        jobs = []
 
     pprint.pprint(channels)
     pprint.pprint(jobs)
     return jobs
 
 def buildReportData(reportid):
-    url = "http://imapex-chronic-bus.green.browndogtech.com/api/get/{}/2".format(reportid)
+    url = busbaseurl + "/api/get/{}/2".format(reportid)
     response = requests.request("GET", url)
 
     data = response.json()
