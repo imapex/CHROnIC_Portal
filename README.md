@@ -37,4 +37,7 @@ docker build -t chronic-portal
 docker run -d -e "CHRONICBUS=<url>" -e "CHRONICUCS=<url"> chronic-portal
 ```
 
+# Suggestions for next steps
+* Add input validation to job creation
+* Add delete button to jobs screen
 
